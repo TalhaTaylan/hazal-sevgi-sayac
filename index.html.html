@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talha ve Hazal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Pacifico', cursive;
+      background: linear-gradient(135deg, #f8cdda, #1d2b64);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 30px;
+    }
+
+    #counter, #wishCounter {
+      font-size: 2rem;
+      margin-top: 20px;
+    }
+
+    #wishButton {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      background-color: #ff6fa4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #wishButton:hover {
+      background-color: #ff85b1;
+    }
+
+    #thankYou {
+      font-size: 1.2rem;
+      margin-top: 15px;
+      color: #fff8dc;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      #counter, #wishCounter {
+        font-size: 1.5rem;
+      }
+      #wishButton {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Talha ve Hazal</h1>
+  <div id="counter"></div>
+
+  <button id="wishButton">Mutluluklar Dile 💖</button>
+  <div id="wishCounter">0 kişi mutluluklar diledi 🥰</div>
+  <div id="thankYou"></div>
+
+  <script>
+    // İlişki başlangıç tarihi: 11 Şubat 2025 (YIL, AY (0'dan başlar), GÜN)
+    const startDate = new Date(2025, 1, 11);
+
+    function updateDayCounter() {
+      const today = new Date();
+      const diffTime = Math.abs(today - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('counter').textContent = `${diffDays} gündür birlikteyiz 💖`;
+    }
+
+    updateDayCounter();
+    setInterval(updateDayCounter, 1000 * 60 * 60); // Her saat başı günceller
+
+    // Mutluluklar dile butonu
+    let wishCount = localStorage.getItem('wishCount') || 0;
+    document.getElementById('wishCounter').textContent = `${wishCount} kişi mutluluklar diledi 🥰`;
+
+    document.getElementById('wishButton').addEventListener('click', () => {
+      wishCount++;
+      localStorage.setItem('wishCount', wishCount);
+      document.getElementById('wishCounter').textContent = `${wishCount} kişi mutluluklar diledi 🥰`;
+      document.getElementById('thankYou').textContent = 'Teşekkür ederiz! 💕';
+
+      setTimeout(() => {
+        document.getElementById('thankYou').textContent = '';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
+
