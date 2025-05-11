@@ -75,8 +75,29 @@
   <div id="wishCounter">0 kişi mutluluklar diledi 🥰</div>
   <div id="thankYou"></div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVIpRjp5-rNBlHnss3gDyEPWkBXccEcdg",
+      authDomain: "hazal-sevgi-sayac.firebaseapp.com",
+      databaseURL: "https://hazal-sevgi-sayac-default-rtdb.firebaseio.com",
+      projectId: "hazal-sevgi-sayac",
+      storageBucket: "hazal-sevgi-sayac.firebasestorage.app",
+      messagingSenderId: "253962611327",
+      appId: "1:253962611327:web:1fb5efb657ab149ebbed4a",
+      measurementId: "G-7N5KX26GRD"
+    };
+
+    // Firebase'i başlat
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const counterRef = db.ref('wishCount');
+
     // İlişki başlangıç tarihi: 11 Şubat 2025 (YIL, AY (0'dan başlar), GÜN)
     const startDate = new Date(2025, 1, 11);
 
@@ -90,26 +111,35 @@
     updateDayCounter();
     setInterval(updateDayCounter, 1000 * 60 * 60); // Her saat başı günceller
 
-    // Mutluluklar dile butonu
-    let wishCount = localStorage.getItem('wishCount') || 0;
-    document.getElementById('wishCounter').textContent = `${wishCount} kişi mutluluklar diledi 🥰`;
-
-    document.getElementById('wishButton').addEventListener('click', () => {
-      wishCount++;
-      localStorage.setItem('wishCount', wishCount);
+    // Firebase'le sayaç verisini al
+    counterRef.on('value', function(snapshot) {
+      const wishCount = snapshot.val() || 0;
       document.getElementById('wishCounter').textContent = `${wishCount} kişi mutluluklar diledi 🥰`;
-      document.getElementById('thankYou').textContent = 'Teşekkür ederiz! 💕';
+    });
 
-      // Konfeti efekti
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
+    // Mutluluklar dile butonu
+    document.getElementById('wishButton').addEventListener('click', () => {
+      // Firebase'e veriyi güncelle
+      counterRef.transaction(function(current) {
+        return (current || 0) + 1;
+      }, function(error, committed) {
+        if (committed) {
+          document.getElementById('thankYou').textContent = 'Teşekkür ederiz! 💕';
+
+          // Konfeti efekti
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+
+          setTimeout(() => {
+            document.getElementById('thankYou').textContent = '';
+          }, 3000);
+        } else {
+          console.error('Hata:', error);
+        }
       });
-
-      setTimeout(() => {
-        document.getElementById('thankYou').textContent = '';
-      }, 3000);
     });
   </script>
 </body>
